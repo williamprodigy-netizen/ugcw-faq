@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UGC World, the questions people actually ask</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+:root{
+  --ink:#211B14; --body:#3f382e; --mute:#6A6051; --line:#e6e2da;
+  --card:#F7F5F0; --accent:#30A05C; --gold:#b8860b; --bg:#FFFFFF;
+  --hl:#D4BEFF; --red:#E5462A;
+  --font-body:"Nunito","Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-hand:"Caveat","Bradley Hand",cursive;
+  --font-marker:"Permanent Marker","Caveat",cursive;
+  --shadow:4px 5px 0 rgba(33,27,20,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--body);
+  font:600 17.5px/1.62 var(--font-body);background-image:linear-gradient(rgba(33,27,20,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(33,27,20,.035) 1px,transparent 1px);background-size:34px 34px}
+
+/* ---------- card system: scrolls as a doc, presents as a deck ---------- */
+.card{max-width:940px;margin:0 auto;padding:38px 40px;border-bottom:1px solid var(--line);
+  position:relative}
+.card:last-child{border-bottom:none}
+@media(max-width:700px){.card{padding:26px 20px}}
+
+body.present{overflow:hidden;background:#fff}
+body.present .card{display:none;max-width:1180px;height:100vh;padding:56px 72px;
+  border:none;margin:0 auto;flex-direction:column;justify-content:center;overflow-y:auto}
+body.present .card.on{display:flex}
+body.present #chrome{display:none}
+@media(max-width:700px){body.present .card{padding:34px 24px}}
+
+h1{font-size:52px;line-height:1.04;font-weight:900;letter-spacing:-.02em;color:var(--ink)}
+h2{font-size:36px;line-height:1.12;font-weight:900;letter-spacing:-.02em;color:var(--ink);margin-bottom:12px}
+h3{font-size:23px;font-weight:800;color:var(--ink);margin-bottom:7px;letter-spacing:-.015em}
+@media(max-width:700px){h1{font-size:30px}h2{font-size:23px}h3{font-size:18px}}
+p{margin-bottom:12px;max-width:62ch}
+p.lead{font-size:20px;color:var(--body)}
+.eyebrow{display:inline-block;font-family:var(--font-marker);font-size:14.5px;letter-spacing:.02em;
+  color:var(--ink);background:var(--hl);padding:5px 13px;border-radius:14px 8px 16px 7px;margin-bottom:16px;
+  transform:rotate(-1.2deg)}
+.eyebrow.gold{color:var(--gold)}
+strong,b{color:var(--ink);font-weight:650}
+em{font-style:normal;background:linear-gradient(transparent 58%,var(--hl) 58%);padding:0 2px}
+
+.hero{text-align:center;padding-top:52px}
+.herosub{font-size:22px;font-weight:700;color:var(--mute);max-width:44ch;margin:14px auto 0;line-height:1.35}
+@media(max-width:700px){.herosub{font-size:17px;margin-top:10px}}
+body.present .herosub{font-size:17px;margin-top:9px}
+@media(max-height:700px){body.present .herosub{font-size:15px;margin-top:7px}}
+.kicker{font-family:var(--font-marker);font-size:20px;color:var(--ink);background:var(--hl);display:inline-block;padding:7px 18px;border-radius:16px 9px 18px 8px;margin:0 auto 20px;transform:rotate(-1deg)}
+@media(max-width:700px){.kicker{font-size:16px;padding:6px 13px;margin-bottom:14px}}
+body.present .kicker{font-size:15px;padding:5px 13px;margin-bottom:12px}
+.hero h1{max-width:20ch;margin:0 auto 8px}
+.hero .watch{display:inline-block;margin:20px 0 8px;font-size:19px;font-weight:700;
+  color:var(--accent);border-bottom:2px solid var(--accent);padding-bottom:2px}
+.video{margin:22px auto 0;max-width:820px;aspect-ratio:16/9;background:#101014;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;color:#7b7c86;font-size:13px;
+  text-align:center;padding:20px;border:1px solid var(--line)}
+
+#toc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 30px;
+  max-width:940px;margin:0 auto 0}
+#toc h3{margin-bottom:14px}
+#toc ol{list-style:none;counter-reset:t;columns:2;column-gap:34px}
+#toc li{counter-increment:t;margin-bottom:9px;break-inside:avoid}
+#toc a{color:var(--body);text-decoration:none;font-size:15.5px}
+#toc a:hover{color:var(--accent)}
+#toc a::before{content:counter(t) ". ";color:var(--mute)}
+@media(max-width:700px){#toc ol{columns:1}}
+
+ul.plain{list-style:none;margin-bottom:12px}
+ul.plain li{padding-left:28px;position:relative;margin-bottom:8px;max-width:62ch}
+ul.plain li::before{content:"";position:absolute;left:0;top:10px;width:8px;height:8px;
+  border-radius:50%;background:var(--accent)}
+ul.check li::before{content:"";border-radius:3px;border:1.5px solid #b8b9c2;background:none;
+  width:14px;height:14px;top:7px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:16px 0}
+.tile{background:var(--card);border:2px solid var(--ink);border-radius:16px 9px 18px 8px/8px 18px 9px 16px;padding:20px;box-shadow:var(--shadow)}
+.tile .n{font-size:28px;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.1}
+.tile .l{font-size:14px;color:var(--mute);margin-top:8px}
+
+.logos{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.logos span{border:1px solid var(--line);background:var(--card);border-radius:10px;
+  padding:13px 22px;font-size:18px;font-weight:700;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0}
+.chips span{background:var(--card);border:1px solid var(--line);border-radius:99px;
+  padding:8px 15px;font-size:14.5px}
+
+figure{margin:14px 0;border:2px solid var(--ink);box-shadow:var(--shadow);border-radius:12px;overflow:hidden;background:var(--card)}
+figure img{display:block;width:100%;height:auto}
+figcaption{padding:12px 15px;font-size:14.5px;background:#fff;border-top:1px solid var(--line)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+/* the $0 breakdown as a chart rather than a wall of text. Bars are proportional
+   to the figure they carry, and the row colour reads before the number does. */
+.gq{font-size:26px;font-weight:900;letter-spacing:-.02em;color:var(--ink);margin:22px 0 8px;
+  line-height:1.2}
+.glead{font-size:17px;color:var(--mute);max-width:70ch;margin-bottom:18px}
+.viz{border:2px solid var(--ink);border-radius:16px 9px 18px 8px/8px 18px 9px 16px;
+  background:var(--card);box-shadow:var(--shadow);padding:20px 22px;margin:0 0 12px}
+.vrow{display:grid;grid-template-columns:190px 1fr 210px;gap:16px;align-items:center;
+  padding:15px 0;border-bottom:1px solid var(--line)}
+.vrow:last-child{border-bottom:none}
+.vlab{font-size:15px;line-height:1.35;color:var(--body)}
+.vlab b{font-size:17px;color:var(--ink)}
+.vbar{background:#e8e4dc;border-radius:99px;height:34px;overflow:hidden;display:block}
+.vbar i{display:flex;align-items:center;height:100%;border-radius:99px;font-style:normal;
+  padding-left:14px;min-width:92px}
+.vbar em{font-style:normal;font-weight:900;font-size:16px;color:#fff;letter-spacing:-.01em}
+.vrow.bad .vbar i{background:var(--red)}
+.vrow.good .vbar i{background:var(--accent)}
+.vrow.best .vbar i{background:var(--ink)}
+.vout{font-size:14.5px;color:var(--mute);line-height:1.35}
+.vnote{font-size:17px;font-weight:700;color:var(--ink);margin:0 0 16px}
+.vstats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.vstat{border:2px solid var(--ink);border-radius:16px 9px 18px 8px/8px 18px 9px 16px;
+  background:#fff;box-shadow:var(--shadow);padding:18px 20px}
+.vstat .n{font-size:38px;font-weight:900;color:var(--accent);line-height:1;letter-spacing:-.02em}
+.vstat .l{font-size:14.5px;color:var(--mute);margin-top:8px;line-height:1.45}
+@media(max-width:780px){
+  .gq{font-size:20px}
+  .vrow{grid-template-columns:1fr;gap:7px;padding:13px 0}
+  .vlab br{display:none}
+  .vstats{grid-template-columns:1fr}
+}
+body.present .gq{font-size:22px;margin-top:0}
+body.present .glead{font-size:15px;margin-bottom:12px}
+body.present .viz{padding:14px 18px}
+body.present .vrow{padding:10px 0}
+body.present .vbar{height:28px}
+body.present .vstat{padding:13px 16px}
+body.present .vstat .n{font-size:30px}
+
+/* three proofs across, matched frames so a wide screenshot and a tall one line up */
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;align-items:stretch}
+.trio figure{margin:0;display:flex;flex-direction:column}
+.trio figure img{height:240px;object-fit:contain;object-position:center;background:var(--card);padding:8px}
+.trio figcaption{flex:1;font-size:13.5px;line-height:1.45;padding:10px 12px}
+@media(max-width:820px){.trio{grid-template-columns:1fr}.trio figure img{height:auto}}
+body.present .trio figure img{max-height:26vh;height:auto}
+/* screenshots come in every shape. Give the two sides one common frame and let the
+   image sit inside it, so a tall phone shot next to a wide browser shot still lines up.
+   Nothing gets cropped, and the lightbox is there when you want it full size. */
+.pair figure{margin:0;display:flex;flex-direction:column}
+.pair figure img{height:290px;object-fit:contain;object-position:center;background:var(--card);
+  padding:8px}
+.pair figcaption{flex:1}
+/* an empty half of a before-and-after keeps the frame so the two sides still line up */
+.pair .pslot .slot{margin:0;height:290px;min-height:0;border:none;border-radius:0;
+  border-bottom:1px dashed #cfd0d8;background:#fafafb}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:18px 0}
+.grid figure{margin:0}
+@media(max-width:700px){.pair{grid-template-columns:1fr}}
+
+/* one creator, one block. Their own post and the public profile that backs it, together */
+.person{margin:22px 0}
+.person h4{font-size:19px;font-weight:800;color:var(--ink);margin-bottom:2px;letter-spacing:-.01em}
+.person .pair{margin-top:10px}
+
+.pair.c9 figure img{object-fit:cover;object-position:top}
+/* the story under the two Cloud Nine shots, boxed so it reads as one unit */
+/* a boxed aside for reassurance copy, so it reads apart from the pitch */
+.aside{border-left:4px solid var(--accent);background:var(--card);border-radius:0 12px 12px 0;
+  padding:16px 20px;margin:14px 0}
+.aside p{margin:0 0 8px;max-width:none;font-size:17px}
+.aside p:last-child{margin-bottom:0}
+
+.c9note{border:2px solid var(--ink);border-radius:16px 9px 18px 8px/8px 18px 9px 16px;
+  background:var(--card);box-shadow:var(--shadow);padding:20px 24px;margin:14px 0 18px}
+.c9note p{margin:0;max-width:none;font-size:17px;line-height:1.55}
+/* claim on the left, the proof for it on the right, so the eye pairs them */
+.claim{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;margin:16px 0}
+.claim .ctext p{margin:0;max-width:34ch;font-size:18.5px;line-height:1.5}
+.claim .cshots{display:flex;flex-direction:column;gap:10px}
+.claim .cshots.stack figcaption{font-size:13px;padding:8px 11px}
+.claim figure{margin:0}
+.claim figure img{width:100%;height:auto;object-fit:contain;background:#fff}
+@media(max-width:760px){.claim{grid-template-columns:1fr;gap:10px}
+  .claim .ctext p{max-width:none}}
+body.present .claim figure img{max-height:30vh}
+
+/* a press citation styled to sit beside a screenshot in a pair */
+.pair .press{background:#fff}
+.press .pbody{height:290px;padding:26px 24px;display:flex;flex-direction:column;
+  justify-content:center;gap:12px;background:var(--card)}
+.press .pmark{font-family:Georgia,'Times New Roman',serif;font-size:34px;font-weight:700;
+  color:var(--ink);line-height:1;letter-spacing:-.02em}
+.press .phead{font-size:17px;line-height:1.4;color:var(--ink);font-weight:700;margin:0;max-width:none}
+.press .plink{font-size:14.5px;font-weight:800;color:var(--accent);text-decoration:none}
+.press .plink:hover{text-decoration:underline}
+@media(max-width:700px){.press .pbody{height:auto;padding:22px 20px}}
+
+/* proof collage, same masonry look as the registration page. Mixed shapes tile
+   into columns with no gaps, and every tile still opens in the lightbox. */
+.collage{columns:3;column-gap:10px;margin:16px 0}
+.collage img{width:100%;display:block;margin:0 0 10px;border-radius:10px;
+  border:1.5px solid var(--line);break-inside:avoid;background:var(--card)}
+@media(max-width:820px){.collage{columns:2}}
+@media(max-width:520px){.collage{columns:1}}
+body.present .collage{columns:5;column-gap:7px}
+body.present .collage img{margin-bottom:7px;border-radius:7px}
+
+/* the decline wall, locked to a 3x3. Nine real screenshots, one shared footprint. */
+.declines{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;align-items:stretch}
+.declines .dq{margin:0;display:flex;flex-direction:column}
+.declines .dq img{width:100%;aspect-ratio:1000/620;object-fit:cover;object-position:center}
+.declines .dq figcaption{flex:1;font-size:13px;line-height:1.45;padding:9px 12px;
+  background:#fff;border-top:1px solid var(--line)}
+@media(max-width:820px){.declines{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.declines{grid-template-columns:1fr}}
+
+/* live campaigns, swipe left and right */
+.rail{position:relative;margin:14px 0}
+.rail-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
+  padding:4px 2px 14px;scrollbar-width:thin}
+.rail-track>figure{flex:0 0 300px;margin:0;scroll-snap-align:center}
+.rail.sq .rail-track>figure{flex:0 0 250px}
+.rail.sq .rail-track img{background:#fff;height:255px;object-fit:contain;padding:6px}
+/* creator cards, wider tiles since each one is a whole slide */
+.rail.cre .rail-track>figure{flex:0 0 330px}
+.rail.cre .rail-track img{background:#fff;height:215px;object-fit:contain}
+@media(max-width:700px){.rail.cre .rail-track>figure{flex:0 0 85%}}
+.rail-track figcaption{font-size:13.5px;padding:10px 13px}
+.rail-prev,.rail-next{position:absolute;pointer-events:auto;top:calc(50% - 30px);transform:translateY(-50%);
+  width:42px;height:42px;border-radius:50%;border:2px solid var(--ink);background:#fff;
+  color:var(--ink);font-size:22px;line-height:1;cursor:pointer;z-index:3;
+  box-shadow:0 4px 14px rgba(33,27,20,.18);font-family:inherit;display:grid;place-items:center}
+.rail-prev{left:-14px}.rail-next{right:-14px}
+.rail-prev[disabled],.rail-next[disabled]{opacity:.25;cursor:default}
+.railhint{font-size:14.5px;color:var(--mute);text-align:center;margin:-4px 0 4px}
+@media(max-width:700px){.rail-prev,.rail-next{display:none}.rail-track>figure{flex:0 0 78%}}
+
+/* click any attachment to blow it up */
+figure img,.pano img,.declines img{cursor:zoom-in}
+#lb{position:fixed;inset:0;z-index:2147483002;background:rgba(20,16,12,.92);
+  display:none;align-items:center;justify-content:center;padding:26px}
+#lb.on{display:flex}
+#lb img{max-width:96vw;max-height:88vh;width:auto;height:auto;border-radius:8px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:zoom-out;object-fit:contain}
+#lb .lbcap{position:absolute;left:0;right:0;bottom:0;padding:16px 22px;color:#fff;
+  font-size:15px;line-height:1.5;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.75))}
+#lb .lbx{position:absolute;top:16px;right:18px;width:42px;height:42px;border-radius:50%;
+  border:none;background:rgba(255,255,255,.16);color:#fff;font-size:24px;cursor:pointer;font-family:inherit}
+#lb .lbn{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;
+  border:none;background:rgba(255,255,255,.16);color:#fff;font-size:26px;cursor:pointer;font-family:inherit}
+#lb .lbn.p{left:18px}#lb .lbn.n{right:18px}
+@media print{#lb{display:none !important}}
+
+.phase{display:grid;grid-template-columns:130px 1fr;gap:20px;padding:20px 0;
+  border-top:1px solid var(--line)}
+.phase .d{font-size:13px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.phase p:last-child{margin-bottom:0}
+@media(max-width:700px){.phase{grid-template-columns:1fr;gap:6px}}
+
+.callout{background:var(--card);border:2px solid var(--ink);border-left:6px solid var(--accent);
+  border-radius:0 12px 12px 0;padding:22px 26px;margin:20px 0}
+.callout p:last-child{margin-bottom:0}
+.big{font-size:76px;font-weight:850;letter-spacing:-.04em;color:var(--ink);line-height:1}
+.flag{background:#fff8e1;border:1px dashed #e0c26a;border-radius:10px;padding:16px 20px;
+  font-size:14.5px;color:#7a5c00;margin:16px 0}
+
+#chrome{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;z-index:50}
+#chrome .brand{font-size:13px;font-weight:750;letter-spacing:.08em;color:var(--ink)}
+#chrome button{background:var(--ink);color:#fff;border:none;font-size:13.5px;font-weight:650;
+  padding:9px 17px;border-radius:8px;cursor:pointer}
+body{padding-top:52px}
+body.present{padding-top:0}
+
+#pnav{display:none;position:fixed;bottom:0;left:0;right:0;height:52px;align-items:center;
+  justify-content:center;gap:14px;background:rgba(255,255,255,.94);border-top:1px solid var(--line);z-index:50}
+body.present #pnav{display:flex}
+#pnav button{background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:13px;
+  font-weight:650;padding:8px 14px;border-radius:7px;cursor:pointer}
+body.commenting #chrome button{display:none}
+body.commenting #chrome::after{content:"Comment mode. Viewing is locked.";font-size:12.5px;color:var(--mute)}
+body.commenting .card{display:block !important;height:auto !important}
+
+figure.sketch{border:2.5px solid var(--ink);border-radius:22px 14px 26px 12px/12px 26px 14px 22px;background:#fff;padding:22px 20px 14px;margin:26px 0;box-shadow:var(--shadow)}figure.sketch svg{display:block;width:100%;height:auto}figure.sketch figcaption{font-family:var(--font-hand);font-size:22px;color:var(--mute);text-align:center;margin-top:10px;border:none;padding:0;background:none}.dgm{border:2.5px solid var(--ink);border-radius:22px 14px 26px 12px/12px 26px 14px 22px;background:#fff;padding:20px;margin:24px 0;box-shadow:var(--shadow)}
+.dgm svg{display:block;width:100%;height:auto}
+figcaption:empty{display:none}
+.dgm .cap{font-size:13.5px;color:var(--mute);margin-top:12px;text-align:center}
+.bigbtn{display:flex;flex-direction:column;gap:3px;text-decoration:none;margin:16px 0;
+  border:2px solid var(--ink);border-radius:16px 9px 18px 8px/8px 18px 9px 16px;
+  background:var(--card);box-shadow:var(--shadow);padding:22px 26px;position:relative;
+  transition:.15s}
+.bigbtn:hover{background:#fff;transform:translate(-1px,-1px);box-shadow:6px 7px 0 rgba(33,27,20,.12)}
+.bigbtn .bb-t{font-size:23px;font-weight:900;color:var(--ink);letter-spacing:-.015em}
+.bigbtn .bb-s{font-size:15.5px;color:var(--mute)}
+.bigbtn .bb-go{position:absolute;right:26px;top:50%;transform:translateY(-50%);
+  font-size:15px;font-weight:800;color:var(--accent)}
+@media(max-width:600px){.bigbtn .bb-go{position:static;transform:none;margin-top:8px}}
+.resgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 6px}
+.resbtn{display:flex;align-items:flex-start;gap:13px;text-decoration:none;
+  border:2px solid var(--ink);border-radius:16px 9px 18px 8px/8px 18px 9px 16px;
+  background:var(--card);box-shadow:var(--shadow);padding:18px 20px;transition:.15s}
+.resbtn:hover{background:#fff;transform:translate(-1px,-1px);box-shadow:6px 7px 0 rgba(33,27,20,.12)}
+.resbtn .ri{flex:0 0 auto;line-height:0;margin-top:3px}
+.resbtn .ri svg{width:25px;height:25px;display:block;fill:var(--ink)}
+.resbtn .rb{display:flex;flex-direction:column}
+.resbtn .rt{font-size:18.5px;font-weight:900;color:var(--ink);letter-spacing:-.015em;line-height:1.18}
+.resbtn .rs{font-size:14.5px;color:var(--mute);line-height:1.42;margin-top:4px}
+.resbtn .rg{font-size:14px;font-weight:800;color:var(--accent);margin-top:9px}
+@media(max-width:700px){.resgrid{grid-template-columns:1fr;gap:12px}}
+.slot{border:1.5px dashed #cfd0d8;border-radius:12px;background:#fafafb;display:flex;
+  align-items:center;justify-content:center;text-align:center;color:#8a8b95;font-size:13.5px;
+  padding:22px;margin:18px 0;line-height:1.55;min-height:190px}
+.slot.wide{aspect-ratio:16/7;min-height:0}
+.pano{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;margin:18px 0;scroll-snap-type:x mandatory}
+.pano>*{flex:0 0 210px;scroll-snap-align:start}
+.pano .slot{min-height:150px;margin:0;font-size:14.5px;padding:12px}
+details.niche{border:2px solid var(--ink);box-shadow:var(--shadow);border-radius:14px 9px 16px 8px/8px 16px 9px 14px;margin-bottom:10px;background:#fff;overflow:hidden}
+details.niche[open]{background:var(--card)}
+details.niche summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;align-items:center;
+  gap:12px;font-size:16.5px;font-weight:650;color:var(--ink)}
+details.niche summary::-webkit-details-marker{display:none}
+details.niche summary .em{font-size:21px}
+details.niche summary .ct{margin-left:auto;font-size:13.5px;font-weight:500;color:var(--mute)}
+details.niche summary::after{content:"›";font-size:20px;color:var(--mute);transition:.2s}
+details.niche[open] summary::after{transform:rotate(90deg)}
+details.niche .in{padding:0 20px 20px}
+details.niche .in p:last-child{margin-bottom:0}
+.brandline{font-size:15px;color:var(--mute);margin-bottom:14px}
+.crow{display:grid;grid-template-columns:110px 1fr auto;gap:12px;align-items:center;
+  padding:11px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.crow:hover .cgo{color:var(--accent)}
+.cname{font-weight:800;color:var(--ink);font-size:16.5px}
+.cres{font-size:15.5px;color:var(--body)}
+.cgo{font-size:14.5px;font-weight:700;color:var(--mute);white-space:nowrap}
+@media(max-width:700px){.crow{grid-template-columns:1fr;gap:2px;padding:10px 0}
+  .cgo{font-size:13.5px}}
+
+body.present .card{justify-content:center;padding:46px 62px 66px}
+body.present h1{font-size:40px}
+body.present h2{font-size:29px;margin-bottom:12px}
+body.present h3{font-size:20px}
+body.present p{margin-bottom:11px;font-size:16.5px}
+body.present p.lead{font-size:18.5px}
+body.present li{font-size:16px;margin-bottom:9px}
+body.present figure{margin:12px 0}
+body.present figure.sketch{margin:12px 0;padding:14px 16px 8px}
+body.present figure.sketch svg{max-height:44vh}
+body.present figure.sketch figcaption{font-size:19px;margin-top:6px}
+body.present figure img{max-height:42vh;width:auto;max-width:100%;margin:0 auto}
+body.present .pair figure img{max-height:30vh}
+body.present .tiles{margin:14px 0;gap:11px}
+body.present .tile{padding:15px}
+body.present .tile .n{font-size:23px}
+body.present .phase{padding:13px 0}
+body.present .callout{padding:15px 18px;margin:13px 0}
+body.present .pano{margin:12px 0}
+body.present .pano figure img{max-height:24vh}
+body.present details.niche summary{padding:12px 16px;font-size:15.5px}
+body.present .flag{display:none}
+
+.contd{font-family:var(--font-marker);font-size:13px;color:var(--mute);margin-bottom:14px;opacity:.75}
+.card.close{text-align:center}
+/* the sign-off headline sits between h2 and body copy, so it lands warm rather
+   than shouting at the end of the page */
+.closeh{font-size:27px;line-height:1.25;max-width:30ch;margin:0 auto 18px}
+@media(max-width:700px){.closeh{font-size:21px}}
+body.present .closeh{font-size:26px}
+.sig{font-family:var(--font-hand);font-size:38px;color:var(--ink);margin:16px 0 0}
+.card.close p{margin-left:auto;margin-right:auto;max-width:54ch}
+
+body.present .hero{padding-top:34px}
+body.present .hero h1{font-size:32px;max-width:24ch}
+body.present .watch{font-size:16px;margin:12px 0 4px}
+body.present .video{max-width:min(62vw,660px);margin-top:10px}
+body.present .hero .lead{font-size:16px;margin-top:8px}
+
+/* ---- phones ---- */
+@media(max-width:700px){
+  body{font-size:16.5px}
+  h1{font-size:27px;line-height:1.12} h2{font-size:25px} h3{font-size:19px}
+  p.lead{font-size:17.5px}
+  .card{padding:40px 20px}
+  figure.sketch{padding:14px 12px 10px;border-radius:16px 10px 18px 9px/9px 18px 10px 16px}
+  figure.sketch figcaption{font-size:18px}
+  .tiles{grid-template-columns:1fr}
+  .tile .n{font-size:24px}
+  .pano>*{flex:0 0 62vw}
+  #toc ol{columns:1}
+  .logos span{font-size:15px;padding:10px 15px}
+  .big{font-size:46px}
+  .sig{font-size:31px}
+  #chrome{padding:0 14px}
+  #chrome button{font-size:12.5px;padding:8px 13px}
+}
+@media(max-width:700px){
+  body.present .card{padding:28px 20px 60px;justify-content:center}
+  body.present h1,body.present .hero h1{font-size:21px;line-height:1.14;max-width:100%} body.present h2{font-size:20px}
+  body.present .hero{padding-top:18px}
+  body.present .hero .video{aspect-ratio:16/9;max-height:26vh}
+  body.present .watch{font-size:14px;margin:9px 0 3px}
+  body.present h3{font-size:17px}
+  body.present p{font-size:15px;margin-bottom:9px}
+  body.present p.lead{font-size:16px}
+  body.present li{font-size:14.5px;margin-bottom:7px}
+  body.present figure img{max-height:30vh}
+  body.present .pair{grid-template-columns:1fr}
+  body.present .pair figure img{max-height:20vh}
+  body.present figure.sketch svg{max-height:32vh}
+  body.present figure.sketch figcaption{font-size:16px}
+  body.present .video{max-width:100%}
+  body.present .tile{padding:11px}
+  body.present .tile .n{font-size:19px}
+  body.present .tile .l{font-size:12.5px}
+}
+/* long doodle labels must never spill the card */
+figure.sketch svg text{paint-order:stroke}
+
+/* short viewports: small phones, and laptops with the dock showing */
+@media(max-height:700px){
+  body.present .card{padding-top:22px;padding-bottom:56px}
+  body.present h1,body.present .hero h1{font-size:19px}
+  body.present h2{font-size:18.5px;margin-bottom:9px}
+  body.present h3{font-size:16px}
+  body.present p{font-size:14px;margin-bottom:7px}
+  body.present p.lead{font-size:15px}
+  body.present li{font-size:13.5px;margin-bottom:6px}
+  body.present figure{margin:8px 0}
+  body.present figure img{max-height:26vh}
+  body.present .pair figure img{max-height:18vh}
+  body.present figure.sketch{padding:10px 10px 6px;margin:8px 0}
+  body.present figure.sketch svg{max-height:30vh}
+  body.present figure.sketch figcaption{font-size:15px;margin-top:4px}
+  body.present .tiles{margin:9px 0;gap:8px}
+  body.present .tile{padding:9px}
+  body.present .tile .n{font-size:17px}
+  body.present .tile .l{font-size:11.5px}
+  body.present .callout{padding:11px 13px;margin:9px 0}
+  body.present .video{max-height:24vh}
+  body.present details.niche summary{padding:9px 13px;font-size:14px}
+}
+
+/* survey: clean data card, no marker font */
+.survey{border:2px solid var(--ink);border-radius:18px 11px 20px 10px/10px 20px 11px 18px;
+  background:#fff;box-shadow:var(--shadow);padding:26px 28px;margin:24px 0}
+.survey-h{font-family:var(--font-body);font-weight:900;font-size:23px;color:var(--ink);letter-spacing:-.01em}
+.survey-sub{font-size:16px;color:var(--mute);margin-top:4px;margin-bottom:20px}
+.survey-rows{display:flex;flex-direction:column;gap:12px}
+.srow{display:grid;grid-template-columns:190px 1fr 62px;align-items:center;gap:14px}
+.sband{font-size:16px;font-weight:700;color:var(--ink);text-align:right}
+.sbar{background:#F1EFEA;border-radius:6px;height:30px;display:block;overflow:hidden}
+.sbar i{display:block;height:100%;background:var(--ink);border-radius:6px}
+.srow.most .sbar i{background:var(--accent)}
+.srow.zero .sbar i{background:var(--red)}
+.spct{font-size:22px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
+.srow.most .spct{color:var(--accent)}
+.srow.zero .spct{color:var(--red)}
+.survey-foot{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:16.5px;font-weight:700;color:var(--ink)}
+@media(max-width:700px){
+  .survey{padding:18px 16px}
+  .srow{grid-template-columns:112px 1fr 48px;gap:9px}
+  .sband{font-size:13.5px} .spct{font-size:18px} .sbar{height:24px}
+  .survey-h{font-size:19px} .survey-sub{font-size:14.5px} .survey-foot{font-size:15px}
+}
+
+/* legibility pass: nothing under 15px */
+.contd{font-size:15px}
+figcaption{font-size:16px}
+details.niche summary .ct{font-size:15px}
+.tile .l{font-size:15.5px}
+.slot{font-size:15px}
+.flag{font-size:15.5px}
+.video{font-size:15px}
+body.present figcaption{font-size:15.5px}
+body.present .contd{font-size:14px}
+
+/* present: media hugs its image instead of floating in a wide empty frame */
+
+
+body.present .pair{width:fit-content;max-width:100%;margin-left:auto;margin-right:auto;
+  grid-template-columns:auto auto;justify-content:center}
+body.present .pair figure img{max-height:38vh}
+
+
+
+
+body.present .survey,body.present .callout,body.present .tiles{max-width:920px;margin-left:auto;margin-right:auto}
+body.present details.niche{max-width:860px;margin-left:auto;margin-right:auto}
+body.present details.niche .in{max-height:40vh;overflow-y:auto}
+body.present .crow{padding:8px 0}
+body.present .cname{font-size:15px} body.present .cres{font-size:14px} body.present .cgo{font-size:13px}
+body.present .brandline{font-size:13.5px;margin-bottom:10px}
+@media(max-height:700px){body.present details.niche .in{max-height:38vh}}
+body.present figure.sketch{width:auto;max-width:1020px}
+
+/* present: agenda slide */
+body.present #toc{background:none;border:none;box-shadow:none;padding:0;max-width:900px;margin:0 auto}
+body.present #toc h3{font-size:30px;font-weight:900;color:var(--ink);margin-bottom:22px;text-align:center}
+body.present #toc ol{columns:2;column-gap:44px}
+body.present #toc li{margin-bottom:15px}
+body.present #toc a{font-size:18px;font-weight:700;color:var(--ink)}
+body.present #toc a::before{color:var(--accent);font-weight:900}
+@media(max-width:700px){body.present #toc ol{columns:1}body.present #toc a{font-size:15px}
+  body.present #toc h3{font-size:22px;margin-bottom:14px}body.present #toc li{margin-bottom:10px}}
+
+/* present: text and media share one left edge */
+body.present .card{align-items:center}
+
+
+body.present .card > figure.sketch{width:min(1000px,100%);margin-left:auto;margin-right:auto}
+body.present .pair{margin-left:0;margin-right:auto;justify-content:start}
+body.present .card.hero > *,body.present .card.close > *{margin-left:auto;margin-right:auto}
+body.present .card.hero figure,body.present .card.close figure{margin-left:auto;margin-right:auto}
+
+/* present: image and caption sit in the same column as the copy, same left edge */
+body.present figure{display:block;background:none;border:none;box-shadow:none;
+  width:min(880px,100%);margin:12px auto;border-radius:0;overflow:visible}
+body.present figure img{max-height:50vh;width:auto;max-width:100%;display:block;margin:0;
+  border:2px solid var(--ink);border-radius:12px}
+body.present figure figcaption{background:none;border:none;padding:10px 0 0;text-align:left;max-width:70ch}
+body.present .pair{width:min(880px,100%);margin:12px auto;grid-template-columns:1fr 1fr;justify-content:stretch}
+body.present .pair figure{width:100%;margin:0}
+body.present .pair figure img{max-height:34vh;max-width:100%;width:100%;object-fit:contain}
+body.present figure.sketch{background:#fff;border:2.5px solid var(--ink);box-shadow:var(--shadow);
+  border-radius:22px 14px 26px 12px/12px 26px 14px 22px;padding:16px 16px 10px;width:min(1000px,100%);margin:14px auto}
+body.present figure.sketch figcaption{text-align:center;max-width:none;padding-top:6px}
+
+/* present: one content column, everything shares its left edge */
+body.present .card > *{width:min(880px,100%);max-width:min(880px,100%);
+  margin-left:auto;margin-right:auto}
+body.present .card > figure.sketch{width:min(1000px,100%);max-width:min(1000px,100%)}
+body.present .card.hero > *,body.present .card.close > *{text-align:center}
+body.present .card.hero .video{margin-left:auto;margin-right:auto}
+
+/* tall phone screenshots must never dominate a card */
+figure img{max-height:520px;max-width:100%;width:auto;margin-left:auto;margin-right:auto}
+.pair figure img{max-height:400px;max-width:100%;width:100%;object-fit:contain;background:#fff}
+@media(max-width:700px){figure img{max-height:360px}.pair figure img{max-height:300px}}
+body.present figure img{max-height:48vh}
+body.present .pair figure img{max-height:34vh;max-width:100%;width:100%;object-fit:contain}
+
+/* proof grids: a run of screenshots reads as one set, not a wall */
+.proofgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0}
+.proofgrid figure{margin:0}
+.proofgrid figure img{max-height:230px;width:100%;object-fit:cover;object-position:top}
+.proofgrid figcaption{font-size:14px;padding:9px 11px;line-height:1.4}
+/* five creator cards, evenly sized with a common image frame so the mixed
+   shapes (profile shots, portrait content) still line up as a row */
+.proofgrid.five{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.proofgrid.five figure{flex:0 1 calc(33.333% - 8px);min-width:230px;display:flex;flex-direction:column}
+.proofgrid.five figure img{width:100%;height:210px;object-fit:cover;object-position:top}
+.proofgrid.five figcaption{flex:1}
+@media(max-width:820px){.proofgrid.five figure{flex:0 1 calc(50% - 6px)}}
+@media(max-width:560px){.proofgrid.five figure{flex:1 1 100%}}
+@media(max-width:700px){.proofgrid{grid-template-columns:1fr 1fr;gap:9px}
+  .proofgrid figure img{max-height:220px}.proofgrid figcaption{font-size:14.5px;padding:11px 13px}}
+body.present .proofgrid{width:min(880px,100%);margin:12px auto;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+body.present .proofgrid figure img{max-height:26vh}
+body.present .proofgrid figcaption{font-size:13px;padding:7px 9px}
+
+/* Joe's clip is filmed vertically, so the frame follows the video rather than
+   boxing a portrait clip inside a landscape shell */
+figure.vid{max-width:330px;margin-left:auto;margin-right:auto}
+figure.vid video{display:block;width:100%;aspect-ratio:480/854;max-height:none;
+  object-fit:cover;background:#000;border-radius:0}
+body.present figure.vid{width:auto;max-width:250px}
+body.present figure.vid video{max-height:40vh;width:auto}
+@media(max-width:700px){figure.vid{max-width:260px}}
+
+/* dense proof cards must still fit a screen when presenting */
+body.present .proofgrid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin:10px auto}
+body.present .proofgrid figure img{max-height:20vh}
+body.present .proofgrid figcaption{font-size:12px;padding:6px 8px;line-height:1.35}
+body.present .card:has(.proofgrid) p{font-size:15.5px;margin-bottom:9px}
+body.present .card:has(.proofgrid) h2{font-size:25px;margin-bottom:10px}
+@media(max-height:700px){
+  body.present .proofgrid figure img{max-height:16vh}
+  body.present .proofgrid figcaption{font-size:11px;padding:5px 7px}
+}
+
+h3.subhead{font-size:26px;font-weight:900;color:var(--ink);letter-spacing:-.02em;line-height:1.2;
+  margin:26px 0 12px;max-width:26ch}
+h3.subhead::after{content:"";display:block;width:52px;height:3px;background:var(--accent);
+  border-radius:2px;margin-top:10px}
+@media(max-width:700px){h3.subhead{font-size:21px;margin-top:20px}}
+body.present h3.subhead{font-size:23px;margin:14px 0 10px}
+@media(max-height:700px){body.present h3.subhead{font-size:19px;margin:10px 0 8px}}
+#pnum{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums;min-width:66px;text-align:center}
+
+/* phone pass: captions were 12.5px, and inline links were a 17px tap target */
+@media(max-width:700px){
+  figcaption{font-size:14.5px;padding:11px 13px;line-height:1.5}
+  .declines .dq figcaption{font-size:14px}
+  .rail-track figcaption{font-size:14px}
+  .card figcaption a,.card p a,.card li a{display:inline-block;padding:6px 0;
+    text-decoration-thickness:2px;text-underline-offset:3px}
+  .crow{padding-top:14px;padding-bottom:14px}
+  details.niche summary{padding:18px 18px}
+  .bigbtn{padding:20px 20px}
+  .bigbtn .bb-t{font-size:20px}
+}
+
+/* the wall plus a heading and two paragraphs is more than one slide holds,
+   so presenting compresses the tiles. Scrolling keeps them full size. */
+body.present .declines{gap:8px}
+body.present .declines .dq img{aspect-ratio:auto;height:15vh;object-fit:cover}
+body.present .declines .dq figcaption{font-size:11px;padding:6px 8px;line-height:1.32}
+@media(max-height:760px){body.present .declines .dq img{height:13vh}}
+</style>
+</head>
+<body data-sidebar>
+
+<div id="chrome"><span class="brand">UGC WORLD</span><button id="btnPresent">▶ Present</button></div>
+
+<section class="card hero" id="c1">
+  <div class="kicker" data-eid="eb5b03e0865">UGC World, the questions people actually ask</div>
+  <h1 data-eid="e0860b2b845">Everything you wanted to ask before your call, answered properly</h1>
+  <p class="herosub" data-eid="e0846a5fb69">Gloria filmed all of these. If you&#x27;d rather read than watch, this is the same thing in text.</p>
+  </section>
+
+<section class="card" id="toc-card"><div id="toc"><h3>Table of Contents</h3><ol><li><a href="#c2">What if it doesn&#x27;t work out? Have you ever had to refund anyone?</a></li><li><a href="#c6">How long does it take to land your first paid brand deal?</a></li><li><a href="#c10">How much time does this take? I work a full-time job.</a></li><li><a href="#c14">Can&#x27;t I just do this by myself?</a></li><li><a href="#c17">Can this work at any age, any country, with no experience?</a></li><li><a href="#c22">How do I know if I&#x27;ll get accepted?</a></li><li><a href="#c25">Are you even still doing UGC? If it makes so much money, why teach it?</a></li><li><a href="#c29">Isn&#x27;t AI taking over UGC?</a></li><li><a href="#c30">How does the guarantee work?</a></li><li><a href="#c32">Bonus resources to check out:</a></li></ol></div></section>
+
+<section class="card" id="c2">
+  <h2 data-eid="e8744816626">What if it doesn&#x27;t work out? Have you ever had to refund anyone?</h2>
+  <p class="lead" data-eid="e848d907e91">Those are the exact questions you should be asking before investing in any program.</p>
+  <p class="lead" data-eid="ee1521ad691">So let me answer them as transparently as I possibly can.</p>
+  <p data-eid="e8e08a926d1">No, we&#x27;re not perfect. I&#x27;m not going to sit here and say we&#x27;ve had a 100% satisfaction rate, that would be an insult to your intelligence.</p>
+  <p data-eid="e4c49a71ca4">Over the years we&#x27;ve worked with 255 active and happy clients. We&#x27;ve refunded 3 people.</p>
+  </section>
+
+<section class="card" id="c3">
+  <p data-eid="e2099b4c512">Two of those ended on good terms. We had conversations, came to a mutual agreement, and refunded them fairly.</p>
+  <p data-eid="e4c3d53ede4">The third left a public review on our Trustpilot and it&#x27;s still up. I&#x27;ve got nothing to hide, so go and read it.</p>
+  <p data-eid="ecbf086724b">We realised we had very different expectations around coaching, personal responsibility, and the kind of community we want to build. I was happy to refund because I don&#x27;t believe either of us would have got what we wanted.</p>
+  <p data-eid="ef44aff4d59">I actually like showing that review, because it acts as a filter.</p>
+  </section>
+
+<section class="card" id="c4">
+  <p data-eid="e2ae762376f">My definition of a good program isn&#x27;t who I accept. It&#x27;s who I deny.</p>
+  <p data-eid="eb137272187">If I let everyone in, the standards drop, and then I can&#x27;t generate results for the 250 people already inside.</p>
+  <h3 class="subhead" data-eid="ef4caa5e66a">Think about it like a restaurant</h3>
+  <p data-eid="ec9852d60ec">Have you ever been to a restaurant that served thousands of people and every single review was five stars?</p>
+  </section>
+
+<section class="card" id="c5">
+  <p data-eid="e1d2831680a">Probably not. Even the best restaurant in your city has someone who thought the food wasn&#x27;t good, or didn&#x27;t like the service, or whose expectations weren&#x27;t met.</p>
+  <p data-eid="e314e9155d3">Does that make it a bad restaurant? Of course not. You judge a business by the overall body of evidence, not by one review.</p>
+  <p data-eid="e60247d1c38">That&#x27;s exactly how I&#x27;d encourage you to evaluate us.</p>
+  </section>
+
+<section class="card" id="c6">
+  <h2 data-eid="e0256ebfbfd">How long does it take to land your first paid brand deal?</h2>
+  <p class="lead" data-eid="e857cc29308">I&#x27;m not going to cherry pick and show you Missy, a mom whose best month with us hit $20k once Cloud9&#x27;s CPM and campaign lead were both running, or Mike Provenzano, a father doing $25,000 a month.</p>
+  <p class="lead" data-eid="ea00eb43646">I want to show you something far more useful. The averages.</p>
+  <p data-eid="e4cecddd335">Across the creators we surveyed, the median time to a first paid brand deal was 7 days once they&#x27;d finished the fast track.</p>
+  <p data-eid="ea48fb20828">Gen X Joe is a grandfather from a corporate tech background who had never recorded a video before joining. He says making money from content creation was the last thing he&#x27;d ever do, aside from joining the NBA. Today Joe makes an extra $3k/m.</p>
+  </section>
+
+<section class="card" id="c7">
+  <p data-eid="e3a76ed6ce3">And it&#x27;s not just Joe. Karen Hanks, Tom Kan, Kathy Freeman and dozens of others are making an extra $1-5k/m on the side doing this.</p>
+  <h3 class="subhead" data-eid="e96e1e6785a">Everyone&#x27;s journey is different</h3>
+  <p data-eid="e72233773a8">Some creators are retired and genuinely only want another $3,000 a month.</p>
+  <p data-eid="e5eca30a791">Others, like Jared, have bigger ambitions and have grown this into $25,000 a month, with their sights set higher.</p>
+  </section>
+
+<section class="card" id="c8">
+  <p data-eid="e7ed747f7f6">When you average every creator together, across all 255+ active creators, the average monthly income sits around $4,000/m.</p>
+  <p data-eid="e73bfd221f8">Most new students think the things that will impact their results are past content experience, an expensive camera, and followers.</p>
+  <p data-eid="eded0cd57eb">That couldn&#x27;t be further from the truth. The top students have skills that are harder to learn. How well you respond to accountability. How coachable you are. Your attitude about showing up every day.</p>
+  <p data-eid="e4f9f38a23e">It&#x27;s why I say this is simple, not easy.</p>
+  </section>
+
+<section class="card" id="c9">
+  <p data-eid="e82b9df7029">And we can show that in the data. Of the creators who reported $0 after their first 30 days, 77% had made fewer than five pieces of content. The ones who posted at least ten to their portfolio were 93% more likely to land a paid deal inside 30 days. The top earners posted 22 days out of 30.</p>
+  <p data-eid="e49e4c20f82">So when you ask how long it takes, the honest answer is that it depends far more on how often you film than on anything else.</p>
+  <p data-eid="eb982f7d264">Landy got laid off from his 9 to 5 and earned $5,000 in his first month. Gabriela, a stay at home mom, crossed $4,000 in her first two weeks.</p>
+  <p data-eid="e9ad1b41be9">Those aren&#x27;t stories I picked because they&#x27;re insanely talented or had some unfair advantage. They&#x27;re normal people who showed up and followed the same system you&#x27;re looking at today.</p>
+  </section>
+
+<section class="card" id="c10">
+  <h2 data-eid="ebe86ff4e9e">How much time does this take? I work a full-time job.</h2>
+  <p class="lead" data-eid="e4ad766ddc9">Honestly, that&#x27;s exactly why I think you should be doing this.</p>
+  <p class="lead" data-eid="e6b734fdda3">When I started I was working double shifts at Walmart and I was in college. I told myself the exact same thing. I don&#x27;t have time.</p>
+  <p data-eid="e9a016a59f5">Then one day I realised something. I was busy, and I was still broke. Which meant being busy wasn&#x27;t solving my problem, it was maintaining it.</p>
+  <p data-eid="e3f4c1b7a24">Most people think they need more time before they can change their life. I think it&#x27;s the opposite. The reason you don&#x27;t have time is because you haven&#x27;t built anything that creates more of it.</p>
+  </section>
+
+<section class="card" id="c11">
+  <h3 class="subhead" data-eid="effcdc5091b">I&#x27;m not telling you to quit your job</h3>
+  <p data-eid="e25cd63ce38">Please don&#x27;t. Keep your income and build this on the side.</p>
+  <p data-eid="ec946daf72b">The first few weeks we&#x27;re talking about an hour or two a day. Create a video, get feedback, improve, repeat.</p>
+  <p data-eid="edabd264cc6">Then something interesting starts to happen. As your skills improve, your income starts replacing the hours you&#x27;re currently selling. That&#x27;s how you buy your time back.</p>
+  </section>
+
+<section class="card" id="c12">
+  <h3 class="subhead" data-eid="ebecbeec94f">The when/then trap</h3>
+  <p data-eid="e9b51daab17">There&#x27;s a mindset trap I see constantly. It sounds completely logical.</p>
+  <ul class="plain"><li data-eid="eb0d3cb4611">When work slows down, then I&#x27;ll start.</li><li data-eid="e92a8ee9013">When I have more money, then I&#x27;ll invest in myself.</li><li data-eid="e0b377409be">When life gets less busy, then I&#x27;ll finally go after what I want.</li></ul>
+  </section>
+
+<section class="card" id="c13">
+  <p data-eid="ee4bbd0720a">The problem is that day almost never arrives. Life doesn&#x27;t suddenly become less busy. You create space by making different decisions.</p>
+  <p data-eid="e2cf93619b1">Nobody says when I&#x27;m fit, then I&#x27;ll start going to the gym. Or when I know how to swim, then I&#x27;ll get in the pool.</p>
+  <p data-eid="e3c88fcfea7">You become fit by going to the gym. You learn to swim by getting in the water. The action comes first, and the confidence follows.</p>
+  <p data-eid="ea3f3088256">The people who have the least time are usually the people who benefit most from building a skill that gives some of that time back.</p>
+  <p data-eid="ecb653d06cc">That&#x27;s exactly how I escaped Walmart. Not because I woke up with more free time. Because I decided to use the little free time I already had differently.</p>
+  </section>
+
+<section class="card" id="c14">
+  <h2 data-eid="e18cf7491e7">Can&#x27;t I just do this by myself?</h2>
+  <p class="lead" data-eid="e0bff09148c">Absolutely. In fact, I hope you believe you can, because you don&#x27;t need me to become a successful UGC creator.</p>
+  <p class="lead" data-eid="eb01caafc2f">The real question isn&#x27;t can I do it by myself. It&#x27;s how fast do I want to get there.</p>
+  <h3 class="subhead" data-eid="ea8faea4302">Think about the gym</h3>
+  <p data-eid="e59d1b9a674">Could you watch hundreds of YouTube videos, write your own program, film your own form, correct your own mistakes, stay disciplined every day, and eventually get in incredible shape?</p>
+  </section>
+
+<section class="card" id="c15">
+  <p data-eid="ef8fffb609c">Of course. People do it every day.</p>
+  <p data-eid="e2511946927">So why do millions of people still invest in personal trainers? Why does every professional athlete have a coach? Why does almost every successful founder have mentors?</p>
+  <p data-eid="e3d35932693">They&#x27;re not investing because they physically can&#x27;t do it alone. They&#x27;re investing because they value speed, feedback, accountability, and someone who has already walked the path.</p>
+  <p data-eid="ee7a9e93c87">Everything I teach is figure-out-able. You can spend the next year piecing together free videos, wondering why one creator says one thing and another says the opposite.</p>
+  </section>
+
+<section class="card" id="c16">
+  <p data-eid="ea8cd2f8f3a">Or you can use a roadmap already tested by hundreds of creators, get direct feedback at every step, know exactly what to improve, and have people holding you accountable when motivation disappears.</p>
+  <p data-eid="e06408396e0">If you genuinely enjoy figuring everything out on your own, I respect that and I wish you nothing but success.</p>
+  <p data-eid="e4cb30156fb">But if you value getting to the outcome faster, that&#x27;s exactly why I built this program. Life is too short to spend years learning lessons someone else can teach you in a few weeks.</p>
+  </section>
+
+<section class="card" id="c17">
+  <h2 data-eid="eeb94274bea">Can this work at any age, any country, with no experience?</h2>
+  <h3 class="subhead" data-eid="e7d637d2756">Age</h3>
+  <p class="lead" data-eid="ef2473359df">Brands hire the creator who looks like the person they&#x27;re trying to sell to, and their customers are every age there is. So being young or being older stops being a problem and becomes the reason you get picked.</p>
+  <p data-eid="e7b7754ff0a">Andreas is sixteen, still in high school, and brands chase him down because they need young faces for a young audience. He makes $4k/m working two hours a day, while being the top wrestler in his class.</p>
+  <p data-eid="ec0e1cbc367">Jesse is forty nine, a mom of two in East Texas who had never heard of UGC last September. A few months in she replaced her whole income working from home.</p>
+  </section>
+
+<section class="card" id="c18">
+  <p data-eid="ee55b5f94f3">Jared is Gen X and got into this because brands were begging for older creators. He&#x27;s now at twenty five thousand a month.</p>
+  <p data-eid="e4ffa805947">The youngest and the oldest person I just named both win for the same reason. Their age is the asset.</p>
+  <h3 class="subhead" data-eid="ed5189de027">Location</h3>
+  <p data-eid="e98a3b0be7b">UGC travels through a file. You film on your phone, you send it to the brand, they run it on their own pages and their own ads. They never think about where you were sitting when you shot it.</p>
+  </section>
+
+<section class="card" id="c19">
+  <p data-eid="e31ef7dd530">Cassandra quit nursing and flew to Berlin with no plan and no safety net. Her first thirty days as a full-time creator, from a laptop in another country, she made four thousand three hundred dollars.</p>
+  <p data-eid="ea74016244a">Andrea messaged me terrified. She said I have an accent, I&#x27;m from Ecuador, I don&#x27;t know if this can even work from here. Sixty days later she was at five thousand a month.</p>
+  <p data-eid="e07cd38b417">Eve is in Germany, where everyone told her UGC doesn&#x27;t pay. A brand found her and booked a deal worth almost two thousand dollars.</p>
+  <p data-eid="ee546c4a826">Better than that, this job turns where you live into a passport. I made over $15k/m consistently for six months straight living in Bali, Thailand and Vietnam.</p>
+  </section>
+
+<section class="card" id="c20">
+  <p data-eid="e4c403d5a2d">One of our creators, Joana, just got a free $3k resort stay in the Maldives from a deal she landed within 30 days.</p>
+  <p data-eid="ee6eee39119">Once you&#x27;re in, we hand you the exact travel blueprint so you can run the whole business from anywhere you&#x27;d want to wake up. A file doesn&#x27;t care where you are.</p>
+  <h3 class="subhead" data-eid="e78c06e5a6e">No experience</h3>
+  <p data-eid="eab2f318cf4">Brands are paying for one thing, a steady stream of real, honest content they can run.</p>
+  </section>
+
+<section class="card" id="c21">
+  <p data-eid="e3271af27dd">That&#x27;s why none of this needs a following. An influencer sells to their own audience. In UGC the brand already has the audience, and you just make the videos they run. No experience and zero followers is a completely normal place to start.</p>
+  <p data-eid="e3f9205a167">Sasha was convinced the whole thing was an internet scam. She gave it a real shot anyway, went from zero to six thousand a month in three months, and quit her full-time job along the way.</p>
+  <p data-eid="ee5a4ab4bde">Karen Bridgeman had never even downloaded TikTok. No following, no marketing background, nothing. She built a full-time income and landed a fifteen hundred dollar deal with a life insurance company.</p>
+  <p data-eid="e6f33df63a4">Different ages, different countries, some starting from absolute zero. Not one of them had the perfect setup.</p>
+  <p data-eid="ebe7402d1b2">If you&#x27;ve been telling yourself you&#x27;re too young, too old, too far away, or too far behind, bring me your exact situation on the call and I&#x27;ll tell you straight whether it fits.</p>
+  </section>
+
+<section class="card" id="c22">
+  <h2 data-eid="efb79804733">How do I know if I&#x27;ll get accepted?</h2>
+  <p class="lead" data-eid="e55a6ff7513">The number one trait of the creators who make it is alignment. The winners create for brands they genuinely fit, and that fit is what makes the content land and makes the brand come back.</p>
+  <p class="lead" data-eid="ee5746887a2">Take Alex Gettlin. He gets paid sixty thousand dollars a year from a single brand, Achieve, a debt relief company. It works because that message actually fits him, so when he talks about it people believe him.</p>
+  <h3 class="subhead" data-eid="eae023023d8">It pays off in whatever world you&#x27;re already in</h3>
+  <p data-eid="e5ee069d593">Jourdan Joseph is a D1 basketball player who films for sports brands between practices, and it pays him six to eight thousand a month without costing him an hour of training.</p>
+  </section>
+
+<section class="card" id="c23">
+  <p data-eid="e664d5055f3">Nicole chases a music career and funds it by creating for instrument brands, an extra three thousand a month.</p>
+  <p data-eid="e01c90a7b55">Olivia walked away from a six figure corporate job to do comedy, and her UGC checks pay for her open mics.</p>
+  <p data-eid="ed7f375a41f">Same skill, three completely different worlds.</p>
+  <p data-eid="e95a8a2b931">Whatever you&#x27;re already obsessed with, skincare, fitness, gaming, there&#x27;s a brand that needs exactly that. Your real interest shows on camera and no script can fake it.</p>
+  </section>
+
+<section class="card" id="c24">
+  <h3 class="subhead" data-eid="e04a2b38cec">How the matchmaking actually works</h3>
+  <p data-eid="ebd2ff07248">This is what we do on your onboarding call. We sit down and work out who you actually are. What you care about, the stuff you&#x27;re naturally funny about, the topics you&#x27;d talk about even if nobody paid you.</p>
+  <p data-eid="e16b700ae90">Then we match that to the brands who need exactly that person.</p>
+  <p data-eid="e2f4d4e8853">If you have niche experience in a specific hobby or interest and you&#x27;re genuinely passionate about it, there are brands that will pay you for that content.</p>
+  </section>
+
+<section class="card" id="c25">
+  <h2 data-eid="e5678950105">Are you even still doing UGC? If it makes so much money, why teach it?</h2>
+  <p class="lead" data-eid="e2f7a7f97f0">That&#x27;s one of my favourite questions, because the assumption behind it is that if UGC makes so much money, why wouldn&#x27;t I keep it to myself.</p>
+  <p class="lead" data-eid="ea262d67181">The answer is the exact reason UGC World exists.</p>
+  <p data-eid="eddfeecc87f">Brands don&#x27;t hire one creator. They hire dozens. Sometimes hundreds. Sometimes thousands, like Poppy AI, who hired me as their content coach.</p>
+  <p data-eid="e4541da0e0a">The term for it is creative diversity. Every customer buys from a different type of person. A 22 year old college student connects with someone completely different than a 55 year old dad. A stay at home mom speaks to a different audience than a corporate executive.</p>
+  </section>
+
+<section class="card" id="c26">
+  <p data-eid="e0bfd40f0e7">Brands already understand this. That&#x27;s why they don&#x27;t build marketing teams around one person, they build portfolios of creators.</p>
+  <h3 class="subhead" data-eid="e719f9fbe95">Here&#x27;s the problem I ran into</h3>
+  <p data-eid="eb2ae71d9a5">As a creator, I&#x27;m one person. There are only so many videos I can film in a day and only so many campaigns I can be the face of. My time is finite.</p>
+  <p data-eid="e32270ff33f">But the demand from brands kept growing. Cloud9 wanted more creators. Other brands started asking me the same thing. Do you know anyone else who creates content like you?</p>
+  </section>
+
+<section class="card" id="c27">
+  <p data-eid="ea55e3ccbc2">At first I&#x27;d recommend friends. Then more brands asked. Then even more.</p>
+  <p data-eid="e44b8d1ee0b">Eventually I realised the bottleneck wasn&#x27;t demand. It was trained creators.</p>
+  <p data-eid="e88bf1aeb9b">That&#x27;s why I built UGC World. There was simply no way I could fulfil the demand by myself.</p>
+  </section>
+
+<section class="card" id="c28">
+  <h3 class="subhead" data-eid="eb7dc4e7e22">And yes, I&#x27;m still creating</h3>
+  <p data-eid="e3f26981935">My face is still all over Cloud9, and I lead their creator campaign with over 25 active creators on it right now.</p>
+  <p data-eid="e10aae59a5c">I still oversee campaigns. I still manage creators. I still work directly with brands.</p>
+  <p data-eid="e10298e1b0f">That matters, because I never want to become someone teaching strategies they used five years ago. I want to stay in the trenches and keep testing, so everything we teach comes from real campaigns, live and updated.</p>
+  </section>
+
+<section class="card" id="c29">
+  <h2 data-eid="e4d35b4e1e0">Isn&#x27;t AI taking over UGC?</h2>
+  <p class="lead" data-eid="e1fd0bbc962">Search it up. And then look at what&#x27;s actually happening on the ground.</p>
+  <p class="lead" data-eid="e8fc96f0306">In fact, even from my end, there&#x27;s more demand than ever.</p>
+  <p data-eid="e7c823f9c0a">The demand from brands kept growing. Cloud9 wanted more creators. Other brands started asking me the same thing.</p>
+  <p data-eid="e8b25c741e9">The bottleneck wasn&#x27;t demand. It was trained creators.</p>
+  <p data-eid="e189d513d9e">There was simply no way I could fulfil the demand by myself, and that hasn&#x27;t changed. Right now we need up to 75 creators, and our own creators are turning campaigns down because they&#x27;re already at capacity.</p>
+  </section>
+
+<section class="card" id="c30">
+  <h2 data-eid="e627163aa8a">How does the guarantee work?</h2>
+  <p class="lead" data-eid="ea77e781e08">If you get accepted and you don&#x27;t earn back at least what you paid us, you get every dollar back.</p>
+  <p class="lead" data-eid="ecd2ab01a89">That&#x27;s it. That&#x27;s the whole thing.</p>
+  <h3 class="subhead" data-eid="e86ec36fa24">What you have to do to qualify</h3>
+  <ul class="plain"><li data-eid="e56c76cf7e9">Complete the 7-Day Fast Track.</li><li data-eid="e51c37f5a1d">Accept feedback from your coach and finish your revisions until your content is brand-ready.</li><li data-eid="e0813cba9a0">Attend your weekly 1:1 call with your coach.</li><li data-eid="e259743e5a4">Attend at least 2 of the 7 group coaching calls we run every week.</li><li data-eid="e04bf384f4f">Complete the first 3 sections of the course modules, around 5 hours of watch time.</li></ul>
+  <p data-eid="e44b86a548d">No twelve hour days. No ten thousand item checklist.</p>
+  <p data-eid="e0584e6677a">And if it ever came to it, I&#x27;d go further than a refund. I&#x27;d buy the content off you myself and hire you.</p>
+  </section>
+
+<section class="card" id="c31">
+  <p data-eid="e6dad60346e">I can offer this because of what the data shows. The people who do those five things almost never end up needing it.</p>
+  <h3 class="subhead" data-eid="e3ee4115990">And what does it cost?</h3>
+  <p data-eid="e92c7347e1b">Enrollment starts at a low four-figure investment, and the highest program is a five-figure investment for the year with everything done for you.</p>
+  <p data-eid="ef2e241f6ac">Your coach walks through the options on the call, because what you come in on moves with what&#x27;s actually live the week you start.</p>
+  </section>
+
+<section class="card" id="c32">
+  <h2 data-eid="eb019b90e19">Bonus resources to check out:</h2>
+  <p class="lead" data-eid="e2185e3a376">A few things worth going through before your call.</p>
+  <div class="resgrid"><a class="resbtn" href="https://www.youtube.com/@gloriaugc" target="_blank" rel="noopener"><span class="ri"><svg viewBox="0 0 24 24"><path d="M23 12s0-3.9-.5-5.8a3 3 0 0 0-2.1-2.1C18.5 3.6 12 3.6 12 3.6s-6.5 0-8.4.5A3 3 0 0 0 1.5 6.2C1 8.1 1 12 1 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 8.4.5 8.4.5s6.5 0 8.4-.5a3 3 0 0 0 2.1-2.1C23 15.9 23 12 23 12zM9.8 15.6V8.4l6.2 3.6z"/></svg></span><span class="rb"><span class="rt">Gloria UGC on YouTube</span><span class="rs">Educational content for creators &amp; for brands.</span><span class="rg">Open &rarr;</span></span></a><a class="resbtn" href="https://www.instagram.com/gloriastonelake/" target="_blank" rel="noopener"><span class="ri"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.43.42.7.83.9 1.4.18.4.38 1 .43 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2a3.9 3.9 0 0 1-.9 1.4c-.42.43-.83.7-1.4.9-.4.18-1 .38-2.2.43-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.18-.4-.38-1-.43-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.42-.43.83-.7 1.4-.9.4-.18 1-.38 2.2-.43C8.4 2.2 8.8 2.2 12 2.2zm0 3.2a6.6 6.6 0 1 0 0 13.2 6.6 6.6 0 0 0 0-13.2zm0 10.9a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm8.4-11.2a1.55 1.55 0 1 1-3.1 0 1.55 1.55 0 0 1 3.1 0z"/></svg></span><span class="rb"><span class="rt">Gloria on Instagram</span><span class="rs">200k+ followers. I post vlogs, as well as documentation of my day in the life content as a full time travel creator.</span><span class="rg">Open &rarr;</span></span></a><a class="resbtn" href="https://www.skool.com/ugc-world" target="_blank" rel="noopener"><span class="ri"><svg viewBox="0 0 24 24"><path d="M12 2.4 1.6 7.2 12 12l8-3.7v5.6h2V7.2zM5.2 11.1v4.4c0 1 .5 1.8 1.4 2.4 1.4.9 3.4 1.4 5.4 1.4s4-.5 5.4-1.4c.9-.6 1.4-1.4 1.4-2.4v-4.4L12 14.2z"/></svg></span><span class="rb"><span class="rt">The free community on Skool</span><span class="rs">15k+ creator network focused on scaling their income.</span><span class="rg">Open &rarr;</span></span></a><a class="resbtn" href="https://ugc-world.com/creator" target="_blank" rel="noopener"><span class="ri"><svg viewBox="0 0 24 24"><path d="M12 1.8 15 8l6.8 1-4.9 4.8 1.2 6.8L12 17.4 5.9 20.6l1.2-6.8L2.2 9 9 8z"/></svg></span><span class="rb"><span class="rt">Creator Success Center</span><span class="rs">1,000+ documented transparent creator results.</span><span class="rg">Open &rarr;</span></span></a></div>
+  </section>
+
+<section class="card close" id="c33">
+  <h2 class="closeh">That&#x27;s everything people ask me before they get on a call.</h2>
+  <p class="lead" data-eid="ea78dc369ce">If yours isn&#x27;t here, bring it with you. That&#x27;s what the call is for.</p>
+  <p class="sig">Gloria 🤍</p>
+  </section>
+
+<div id="pnav">
+  <button id="pPrev">◀</button>
+  <span id="pnum"></span>
+  <button id="pNext">▶</button>
+  <button id="pExit">Exit present</button>
+</div>
+<script>
+const cards=[...document.querySelectorAll(".card")];
+let cur=0, presenting=false;
+function fit(card){
+  // shrink the media on this card until the whole thing fits one screen
+  const media=[...card.querySelectorAll("figure img, figure video, figure.sketch svg, .proofgrid img, .rail-track img, .declines img")];
+  if(!media.length) return;
+  media.forEach(m=>m.style.maxHeight="");
+  if(card.scrollHeight<=innerHeight) return;
+  for(let cap=46; cap>=10; cap-=3){
+    media.forEach(m=>m.style.maxHeight=cap+"vh");
+    if(card.scrollHeight<=innerHeight-4) return;
+  }
+}
+function paint(){
+  cards.forEach((c,i)=>c.classList.toggle("on",i===cur));
+  if(presenting && cards[cur]) fit(cards[cur]);
+  document.getElementById("pnum").textContent=(cur+1)+" / "+cards.length;
+}
+function enter(){
+  if(document.body.classList.contains("commenting")) return;   // locked while commenting
+  presenting=true; document.body.classList.add("present");
+  const vis=cards.findIndex(c=>c.getBoundingClientRect().bottom>60);
+  cur=vis<0?0:vis; paint();
+  document.documentElement.requestFullscreen?.().catch(()=>{});
+}
+function exit(){
+  presenting=false; document.body.classList.remove("present");
+  cards.forEach(c=>c.querySelectorAll("figure img, figure video, figure.sketch svg, .proofgrid img")
+    .forEach(m=>m.style.maxHeight=""));
+  cards.forEach(c=>c.classList.remove("on"));
+  document.exitFullscreen?.().catch(()=>{});
+  cards[cur]?.scrollIntoView({behavior:"instant",block:"start"});
+}
+function go(n){ cur=Math.max(0,Math.min(cards.length-1,n)); paint(); }
+document.getElementById("btnPresent").onclick=enter;
+document.getElementById("pExit").onclick=exit;
+document.getElementById("pPrev").onclick=()=>go(cur-1);
+document.getElementById("pNext").onclick=()=>go(cur+1);
+function isTyping(e){
+  const t=e.target;
+  if(!t) return false;
+  if(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.tagName==="SELECT") return true;
+  if(t.isContentEditable) return true;
+  return !!(t.closest && t.closest("#rvPanel,#rvForm,[id^='rv'],.rv"));
+}
+addEventListener("keydown",e=>{
+  if(isTyping(e)) return;                 // never steal keys while he is writing a note
+  if(!presenting){ if(e.key==="p")enter(); return; }
+  if(["ArrowRight"," ","PageDown","ArrowDown"].includes(e.key)){e.preventDefault();go(cur+1)}
+  if(["ArrowLeft","PageUp","ArrowUp"].includes(e.key)){e.preventDefault();go(cur-1)}
+  if(e.key==="Escape")exit();
+  if(e.key==="Home")go(0); if(e.key==="End")go(cards.length-1);
+});
+document.addEventListener("fullscreenchange",()=>{ if(!document.fullscreenElement&&presenting)exit(); });
+window.UGCW_LAYERS = window.UGCW_LAYERS || {};
+window.UGCW_LAYERS.present = v => { if(!v && presenting) exit(); else if(v) enter(); };
+</script>
+<script src="assets/lightbox.js"></script>
+<script src="assets/rail.js"></script>
+<script src="assets/nav.js"></script>
+<script src="assets/sidebar.js"></script>
+</body>
+</html>
